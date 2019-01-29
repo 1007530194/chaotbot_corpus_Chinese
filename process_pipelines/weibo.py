@@ -1,7 +1,5 @@
-import codecs
 import os
 
-from config import Config
 from util import *
 
 
@@ -9,11 +7,19 @@ def preprocess(raw_corpus_post_file_name, raw_corpus_response_file_name, result_
     raw_corpus_post_file = codecs.open(raw_corpus_post_file_name, encoding=Config.encoding)
     raw_corpus_response_file = codecs.open(raw_corpus_response_file_name, encoding=Config.encoding)
 
-    result = codecs.open(result_file_name, "w", encoding=Config.encoding)
+    file_num = 0
+    file_name = result_file_name.replace(".tsv", "-" + str(file_num) + ".tsv")
+    result = codecs.open(file_name, "w", encoding=Config.encoding)
 
     for index, pair in enumerate(zip(raw_corpus_post_file, raw_corpus_response_file)):
         if index % 100000 == 0:
             print(raw_corpus_post_file_name, raw_corpus_response_file_name, index)
+            if (index % 900000 == 0) & (index > 0):
+                result.close()
+                format_refine(file_name)
+                file_num += 1
+                file_name = result_file_name.replace(".tsv", "-" + str(file_num) + ".tsv")
+                result = codecs.open(file_name, "w", encoding=Config.encoding)
 
         post = pair[0].strip().replace(" ", "")
         response = pair[1].strip().replace(" ", "")
@@ -32,4 +38,3 @@ def weibo_process_pipeline():
     result_file_name = os.path.join(Config.clean_chat_corpus_root, "weibo.tsv")
 
     preprocess(raw_corpus_post_file_name, raw_corpus_response_file_name, result_file_name)
-    format_refine(result_file_name)

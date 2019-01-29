@@ -26,4 +26,8 @@ def process_all_corpus():
 
 
 if __name__ == '__main__':
-    process_all_corpus()
+    # process_all_corpus()
+    print("begin")
+    # weibo_process_pipeline()
+    tieba_process_pipeline()
+    # subtitle_process_pipeline()
